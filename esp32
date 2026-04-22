@@ -1,0 +1,58 @@
+#include <WiFi.h>
+
+// 💡 Wi-Fi 정보
+const char* ssid = "asia-edu_2G";
+const char* password = "12345678";
+
+// 🌟 PC(Python 서버) 정보 설정
+const char* serverIP = "192.168.0.139"; 
+const uint16_t serverPort = 10000;
+
+WiFiClient client;
+
+void setup() {
+  Serial.begin(115200); 
+  Serial2.begin(9600, SERIAL_8N1, 16, 17); // 아두이노 우노와 통신
+
+  // Wi-Fi 연결
+  WiFi.begin(ssid, password);
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    Serial.print(".");
+  }
+  Serial.println("\n✅ Wi-Fi 연결 성공!");
+}
+
+void loop() {
+  // 1. 🌟 서버(PC) 연결 확인 및 자동 재접속 로직
+  if (!client.connected()) {
+    Serial.println("🔄 PC 서버에 접속 시도 중...");
+    if (client.connect(serverIP, serverPort)) {
+      Serial.println("✅ PC 관제 센터와 연결되었습니다!");
+    } else {
+      Serial.println("❌ 접속 실패. 2초 후 다시 시도합니다.");
+      delay(2000);
+      return; // 연결 안 되면 아래 로직 실행 안 함
+    }
+  }
+
+  // 2. [PC -> 아두이노] PC에서 온 명령 배달
+  if (client.available()) {
+    char c = client.read();
+    Serial2.print(c); 
+    Serial.print(c);  
+  }
+
+  // 3. [아두이노 -> PC] 엔코더 데이터 배달
+  if (Serial2.available()) {
+    char c = Serial2.read();
+    client.print(c); // 소켓으로 전송
+    Serial.print(c); 
+  }
+
+  // 4. [시리얼 모니터 -> 아두이노] 수동 제어
+  if (Serial.available()) {
+    char c = Serial.read();
+    Serial2.print(c);
+  }
+}
