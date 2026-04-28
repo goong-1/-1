@@ -1,0 +1,70 @@
+.right-zone { 
+    grid-area: right; 
+    background-color: #f4f6f8; 
+    padding: 15px; 
+    border-left: 1px solid #e2e8f0;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    box-sizing: border-box;
+}
+
+.status-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+}
+
+.status-card {
+    background: #ffffff;
+    padding: 12px;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border: 1px solid #eef0f2;
+}
+
+.chart-container {
+    background: #ffffff;
+    border-radius: 15px;
+    padding: 15px;
+    border: 1px solid #eef0f2;
+    width: 100%;
+    box-sizing: border-box;
+    overflow: hidden; /* 영역 밖 노출 차단 */
+}
+
+.chart-header { 
+    display: flex; 
+    align-items: center; 
+    gap: 10px; 
+    width: 100%;
+}
+
+.chart-numeric { 
+    display: flex; 
+    flex-direction: column; 
+    min-width: 75px; 
+}
+
+/* 그래프 실제 캔버스 부모 */
+.chart-body {
+    flex: 1;
+    height: 160px;
+    position: relative;
+    overflow: hidden; /* 캔버스가 삐져나오지 못하게 함 */
+}
+
+.camera-container {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    background-color: #000;
+    border-radius: 12px;
+    background-image: url('../assets/view.jpg');
+    background-size: cover;
+    background-position: center;
+    margin-top: auto;
+}

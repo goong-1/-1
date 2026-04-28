@@ -1,0 +1,79 @@
+<footer class="footer-zone">
+    <!-- 1. 로그 섹션: id="log-tbody"를 통해 실시간 로그 삽입 -->
+    <section class="footer-card log-section">
+        <div class="card-header">
+            <div class="tabs">
+                <span class="tab active">시나리오 모니터링 로그</span>
+                <span class="tab">모니터링 제어 로그</span>
+            </div>
+        </div>
+        <div class="log-table-wrapper">
+            <table class="log-table">
+                <thead>
+                    <tr>
+                        <th style="width: 130px;">날짜</th>
+                        <th>시나리오명</th>
+                        <th>ID</th>
+                        <th>이름</th>
+                        <th style="width: 40px;">결과</th>
+                    </tr>
+                </thead>
+                <tbody id="log-tbody">
+                    <!-- main.js에서 추가하는 로그가 여기에 쌓입니다 -->
+                    <tr>
+                        <td>2026.03.22 13:02:54</td>
+                        <td>SystemCheck</td>
+                        <td>Gateway_Initial</td>
+                        <td>System</td>
+                        <td>✅</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- 2. 제어 섹션 (기존 유지) -->
+    <section class="footer-card control-section">
+        <div class="card-header">
+            <div class="tabs">
+                <span class="tab active">로봇 제어</span>
+                <span class="tab">수동 제어</span>
+            </div>
+        </div>
+        <div class="control-container">
+            <div class="main-controls">
+                <button class="ctrl-item">⚡<br>충전소</button>
+                <button class="ctrl-item">🔊<br>TTS</button>
+                <button class="ctrl-item">📦<br>적재함</button>
+                <button class="ctrl-item">📍<br>위치설정</button>
+                <button class="ctrl-item pause">Ⅱ<br>일시정지</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- 3. 원격 제어 섹션: onclick="moveRobot(...)" 연결 -->
+    <section class="footer-card remote-section">
+        <div class="card-header">
+            <span class="tab active">원격 제어</span>
+            <label class="switch">
+                <input type="checkbox" id="remote-toggle" checked>
+                <span class="slider"></span>
+            </label>
+        </div>
+        
+        <div class="remote-ui">
+            <div class="d-pad">
+                <!-- 방향키에 moveRobot 함수 연결 -->
+                <button class="d-btn btn-up" onclick="moveRobot('up')">▲</button>
+                <button class="d-btn btn-left" onclick="moveRobot('left')">◀</button>
+                
+                <div class="btn-center" onclick="moveRobot('stop')">●</div>
+                
+                <button class="d-btn btn-right" onclick="moveRobot('right')">▶</button>
+                <button class="circle-btn btn-turnL" onclick="moveRobot('left')">⟲</button>
+                <button class="d-btn btn-down" onclick="moveRobot('down')">▼</button>
+                <button class="circle-btn btn-turnR" onclick="moveRobot('right')">⟳</button>
+            </div>
+        </div>
+    </section>
+</footer>

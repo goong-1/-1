@@ -1,0 +1,147 @@
+<aside class="right-zone">
+    <!-- 1. 상단 상태 그리드 (배터리, CPU, 메모리 실시간 반영) -->
+    <div class="status-grid">
+        <div class="status-card">
+            <span class="status-label">배터리 잔량</span>
+            <span class="status-value">
+                <span id="bat-val">--</span><span class="status-unit">% ⚡</span>
+            </span>
+        </div>
+        <div class="status-card">
+            <span class="status-label">온라인 상태</span>
+            <span class="status-value" style="color:#10b981; font-size:13px;">Connected</span>
+        </div>
+        <div class="status-card">
+            <span class="status-label">CPU</span>
+            <span class="status-value">
+                <span id="cpu-val">--</span><span class="status-unit">%</span>
+            </span>
+        </div>
+        <div class="status-card">
+            <span class="status-label">Memory</span>
+            <span class="status-value">
+                <span id="mem-val">--</span><span class="status-unit">%</span>
+            </span>
+        </div>
+    </div>
+
+    <!-- 2. 중앙 차트 섹션 -->
+    <div class="chart-container">
+        <div class="chart-header">
+            <div class="chart-numeric">
+                <span class="num-label" style="color:#94a3b8; font-size:11px;">Temp</span>
+                <span class="num-temp" id="live-temp" style="color:#3b82f6; font-size:22px; font-weight:800;">--°</span>
+                <div style="height:20px;"></div>
+                <span class="num-label" style="color:#94a3b8; font-size:11px;">Speed</span>
+                <span class="num-speed" id="live-speed" style="color:#10b981; font-size:22px; font-weight:800;">--</span>
+            </div>
+            <!-- 그래프 영역: 부모 컨테이너가 캔버스 크기를 제한함 -->
+            <div class="chart-body" style="flex:1; height:160px; position: relative; overflow: hidden;">
+                <canvas id="telemetryChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. 하단 카메라 뷰 -->
+    <div class="camera-container"></div>
+
+    <!-- 4. 스크립트 (Chart.js 및 실시간 업데이트) -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        const ctx = document.getElementById('telemetryChart').getContext('2d');
+        
+        // 차트 초기 설정
+        const telemetryChart = new Chart(ctx, {
+            data: {
+                labels: Array(15).fill(''),
+                datasets: [
+                    {
+                        type: 'line',
+                        label: 'Temp',
+                        data: Array(15).fill(null),
+                        borderColor: '#3b82f6',
+                        borderWidth: 2,
+                        tension: 0.4,
+                        pointRadius: 0,
+                        yAxisID: 'y-temp'
+                    },
+                    {
+                        type: 'bar',
+                        label: 'Speed',
+                        data: Array(15).fill(null),
+                        backgroundColor: 'rgba(16, 185, 129, 0.3)',
+                        borderColor: '#10b981',
+                        borderWidth: 1,
+                        yAxisID: 'y-speed',
+                        barPercentage: 0.6
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    'y-temp': {
+                        type: 'linear',
+                        position: 'left',
+                        display: true,
+                        suggestedMin: 20, 
+                        suggestedMax: 35,
+                        grid: { display: false },
+                        ticks: { font: { size: 9 } }
+                    },
+                    'y-speed': {
+                        type: 'linear',
+                        position: 'right',
+                        display: true,
+                        suggestedMin: 0,
+                        suggestedMax: 2.0, 
+                        grid: { color: '#f1f5f9' },
+                        ticks: { font: { size: 9 } }
+                    },
+                    x: {
+                        display: true,
+                        grid: { display: false }
+                    }
+                },
+                plugins: { legend: { display: false } },
+                animation: { duration: 400 }
+            }
+        });
+
+        // 데이터 업데이트 함수
+        function update() {
+            fetch('/api/telemetry')
+                .then(res => res.json())
+                .then(data => {
+                    // 1. 온도 및 상태 업데이트 (기존과 동일)
+                    if (data.temp !== undefined) document.getElementById('live-temp').innerText = data.temp.toFixed(1) + '°';
+                    if (data.battery !== undefined) document.getElementById('bat-val').innerText = data.battery;
+                    if (data.cpu !== undefined) document.getElementById('cpu-val').innerText = data.cpu;
+                    if (data.memory !== undefined) document.getElementById('mem-val').innerText = data.memory;
+                    
+                    // 2. [핵심 수정] 속도는 서버의 data.speed 대신 main.js의 실시간 값을 참조
+                    // main.js에서 조작 시 이 값이 0.8~1.5로 변합니다.
+                    const currentVisualSpeed = (window.robotState && window.robotState.currentSpeed) ? window.robotState.currentSpeed : 0.0;
+                    
+                    // 화면 텍스트 업데이트
+                    document.getElementById('live-speed').innerText = currentVisualSpeed.toFixed(2);
+                    
+                    // 3. 차트 데이터 업데이트
+                    telemetryChart.data.datasets[0].data.push(data.temp);
+                    telemetryChart.data.datasets[1].data.push(currentVisualSpeed); // 서버값 대신 실시간 속도 투입!
+                    
+                    telemetryChart.data.datasets[0].data.shift();
+                    telemetryChart.data.datasets[1].data.shift();
+                    
+                    telemetryChart.update('none');
+                })
+                .catch(err => console.error("Telemetry fetch error:", err));
+        }        
+
+        // 1.5초마다 실행
+        setInterval(update, 1500);
+        // 초기 1회 즉시 실행
+        update();
+    </script>
+</aside>

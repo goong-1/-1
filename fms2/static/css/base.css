@@ -1,0 +1,33 @@
+/* 전역 초기화 */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body, html { 
+    width: 100%; height: 100vh; overflow: hidden; 
+    background-color: #f0f2f5; color: #334155; 
+    font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif; 
+}
+
+/* 대시보드 그리드 레이아웃 */
+.dashboard-grid {
+    display: grid; width: 100vw; height: 100vh;
+    grid-template-columns: 80px 1fr 320px;
+    grid-template-rows: 60px 1fr 250px; 
+    grid-template-areas: 
+        "sidebar header header"
+        "sidebar map right"
+        "sidebar footer footer";
+    gap: 1px; background-color: #e2e8f0;
+}
+
+/* 공통 카드 스타일 */
+.footer-card {
+    background: #ffffff; border-radius: 12px;
+    display: flex; flex-direction: column;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+    overflow: hidden;
+}
+
+.card-header {
+    padding: 12px 18px; border-bottom: 1px solid #edf2f7;
+    display: flex; align-items: center; gap: 15px;
+}

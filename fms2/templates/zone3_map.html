@@ -1,0 +1,36 @@
+<main class="map-zone">
+    <div class="map-overlay-info">
+        <div style="font-size: 14px; font-weight: 800; color: #1e293b; margin-bottom: 4px;">건물 관제 모드</div>
+        <div style="font-size: 11px; color: #64748b;">현재 층: <span id="current-floor-text" style="color: #3b82f6; font-weight: 700;">1F (메인 로비)</span></div>
+    </div>
+
+    <!-- 로봇 마커: ID와 초기 스타일 수정 -->
+    <div class="robot-marker" id="robot-1" style="position: absolute; z-index: 5; transition: all 0.15s ease-out; cursor: pointer;" onclick="alert('R1 상세 정보')">
+        <div class="robot-body" style="width: 40px; height: 40px; background: #3b82f6; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 3px solid white; box-shadow: 0 4px 10px rgba(0,0,0,0.2);">
+            <span style="color: white; font-size: 10px; font-weight: 800;">R1</span>
+        </div>
+    </div>
+
+    <div class="map-overlay-floors">
+        <button class="floor-btn" onclick="changeFloor(this, '5F')">5F</button>
+        <button class="floor-btn" onclick="changeFloor(this, '4F')">4F</button>
+        <button class="floor-btn" onclick="changeFloor(this, '3F')">3F</button>
+        <button class="floor-btn" onclick="changeFloor(this, '2F')">2F</button>
+        <button class="floor-btn active" onclick="changeFloor(this, '1F')">1F</button>
+        <button class="floor-btn" onclick="changeFloor(this, 'B1')">B1</button>
+    </div>
+
+    <script>
+        function changeFloor(btn, floorName) {
+            // 모든 버튼에서 active 클래스 제거
+            document.querySelectorAll('.floor-btn').forEach(b => b.classList.remove('active'));
+            // 클릭된 버튼에 active 클래스 추가
+            btn.classList.add('active');
+            // 정보창 텍스트 변경
+            document.getElementById('current-floor-text').innerText = floorName + (floorName === '1F' ? ' (메인 로비)' : '');
+            
+            console.log("Selected Floor:", floorName);
+            // 여기에 서버로 층수 변경 신호를 보내는 로직을 추가할 수 있습니다.
+        }
+    </script>
+</main>

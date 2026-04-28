@@ -1,0 +1,187 @@
+<aside class="right-zone">
+    <!-- 1. 상단 상태 그리드 -->
+    <div class="status-grid">
+        <div class="status-card">
+            <span class="status-label">배터리 잔량</span>
+            <span class="status-value">
+                <span id="bat-val">--</span><span class="status-unit">% ⚡</span>
+            </span>
+        </div>
+        <div class="status-card">
+            <span class="status-label">온라인 상태</span>
+            <!-- id="status-text" 추가하여 동적 변경 가능하게 함 -->
+            <span id="status-text" class="status-value" style="color:#10b981; font-size:13px;">Connected</span>
+        </div>
+        <div class="status-card">
+            <span class="status-label">CPU</span>
+            <span class="status-value">
+                <span id="cpu-val">--</span><span class="status-unit">%</span>
+            </span>
+        </div>
+        <div class="status-card">
+            <span class="status-label">Memory</span>
+            <span class="status-value">
+                <span id="mem-val">--</span><span class="status-unit">%</span>
+            </span>
+        </div>
+    </div>
+
+    <!-- 2. 중앙 차트 섹션 -->
+    <div class="chart-container">
+        <div class="chart-header">
+            <div class="chart-numeric">
+                <span class="num-label" style="color:#94a3b8; font-size:11px;">Temp</span>
+                <span class="num-temp" id="live-temp" style="color:#3b82f6; font-size:22px; font-weight:800;">--°</span>
+                <div style="height:20px;"></div>
+                <span class="num-label" style="color:#94a3b8; font-size:11px;">Speed</span>
+                <span class="num-speed" id="live-speed" style="color:#10b981; font-size:22px; font-weight:800;">--</span>
+            </div>
+            <div class="chart-body" style="flex:1; height:160px; position: relative; overflow: hidden;">
+                <canvas id="telemetryChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div class="video-container">
+    <div class="video-header">
+        <span class="status-dot blink"></span>
+        <strong style="color: white;">LIVE VIDEO - AI VISION</strong>
+    </div>
+    
+    <img src="{{ url_for('video_feed') }}" width="100%" alt="로봇 시각 데이터" class="webcam-view">
+    
+    <div class="video-overlay">
+        <p id="ai-detection-log">[AI] 빨간색 마커 감시 중...</p>
+    </div>
+</div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        const ctx = document.getElementById('telemetryChart').getContext('2d');
+        
+        const telemetryChart = new Chart(ctx, {
+            data: {
+                labels: Array(15).fill(''),
+                datasets: [
+                    {
+                        type: 'line',
+                        label: 'Temp',
+                        data: Array(15).fill(null),
+                        borderColor: '#3b82f6',
+                        borderWidth: 2,
+                        tension: 0.4,
+                        pointRadius: 0,
+                        yAxisID: 'y-temp'
+                    },
+                    {
+                        type: 'bar',
+                        label: 'Speed',
+                        data: Array(15).fill(null),
+                        backgroundColor: 'rgba(16, 185, 129, 0.3)',
+                        borderColor: '#10b981',
+                        borderWidth: 1,
+                        yAxisID: 'y-speed',
+                        barPercentage: 0.6
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    'y-temp': {
+                        type: 'linear',
+                        position: 'left',
+                        display: true,
+                        suggestedMin: 20, 
+                        suggestedMax: 35,
+                        grid: { display: false },
+                        ticks: { font: { size: 9 } }
+                    },
+                    'y-speed': {
+                        type: 'linear',
+                        position: 'right',
+                        display: true,
+                        suggestedMin: 0,
+                        suggestedMax: 2.0, 
+                        grid: { color: '#f1f5f9' },
+                        ticks: { font: { size: 9 } }
+                    },
+                    x: { display: true, grid: { display: false } }
+                },
+                plugins: { legend: { display: false } },
+                animation: { duration: 400 }
+            }
+        });
+
+        function update() {
+            fetch('/api/telemetry')
+                .then(res => res.json())
+                .then(data => {
+                    const tempEl = document.getElementById('live-temp');
+                    const statusText = document.getElementById('status-text');
+                    const speedEl = document.getElementById('live-speed');
+                    const batEl = document.getElementById('bat-val');
+                    const cpuEl = document.getElementById('cpu-val');
+                    const memEl = document.getElementById('mem-val');
+
+                    // 1. [체크] 데이터가 "--"이거나 유효하지 않은 경우 (오프라인 처리)
+                    if (data.temp === "--" || data.temp === null || data.temp === undefined) {
+                        tempEl.innerText = "--°";
+                        speedEl.innerText = "--";
+                        batEl.innerText = "--";
+                        cpuEl.innerText = "--";
+                        memEl.innerText = "--";
+                        
+                        if(statusText) {
+                            statusText.innerText = "Offline";
+                            statusText.style.color = "#ef4444";
+                        }
+                        // 차트에도 null을 넣어 데이터 끊김을 표시 (선택 사항)
+                        telemetryChart.data.datasets[0].data.push(null);
+                        telemetryChart.data.datasets[1].data.push(null);
+                    } 
+                    // 2. [체크] 데이터가 정상적으로 들어온 경우 (온라인 처리)
+                    else {
+                        if(statusText) {
+                            statusText.innerText = "Connected";
+                            statusText.style.color = "#10b981";
+                        }
+
+                        // 온도 표시 (숫자일 경우 소수점 처리)
+                        tempEl.innerText = typeof data.temp === 'number' ? data.temp.toFixed(1) + '°' : data.temp + '°';
+                        batEl.innerText = data.battery;
+                        cpuEl.innerText = data.cpu;
+                        memEl.innerText = data.memory;
+                        
+                        // main.js의 로봇 상태에서 속도 가져오기
+                        const currentVisualSpeed = (window.robotState && window.robotState.currentSpeed !== undefined) 
+                                                    ? window.robotState.currentSpeed : 0.0;
+                        speedEl.innerText = currentVisualSpeed.toFixed(2);
+                        
+                        // 차트 데이터 추가
+                        telemetryChart.data.datasets[0].data.push(data.temp);
+                        telemetryChart.data.datasets[1].data.push(currentVisualSpeed);
+                    }
+
+                    // 3. [공통] 차트 배열 유지 및 업데이트 (함수 종료 없이 항상 실행)
+                    if (telemetryChart.data.datasets[0].data.length > 15) {
+                        telemetryChart.data.datasets[0].data.shift();
+                        telemetryChart.data.datasets[1].data.shift();
+                    }
+                    telemetryChart.update('none');
+                })
+                .catch(err => {
+                    console.error("Telemetry fetch error:", err);
+                    // 통신 에러 시에도 상태 표시 업데이트
+                    const statusText = document.getElementById('status-text');
+                    if(statusText) {
+                        statusText.innerText = "Error";
+                        statusText.style.color = "#ef4444";
+                    }
+                });
+        }        
+        setInterval(update, 1500);
+        update();
+    </script>
+</aside>

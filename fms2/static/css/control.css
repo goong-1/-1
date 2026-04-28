@@ -1,0 +1,135 @@
+/* --- Zone 5: 하단 푸터 레이아웃 --- */
+.footer-zone { 
+    grid-area: footer; 
+    display: flex;
+    gap: 12px;
+    padding: 10px;
+    background-color: #f1f3f5;
+    align-items: stretch;
+}
+
+.footer-card {
+    background: #ffffff;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    border: 1px solid #e2e8f0;
+    overflow: hidden;
+}
+
+/* 섹션 비중 조정: 로그 영역 확장 */
+.log-section { flex: 2.5; min-width: 0; }
+.control-section { flex: 1.5; min-width: 0; }
+.remote-section { flex: 1.0; min-width: 250px; }
+
+/* 로그 테이블 최적화 */
+.log-table-wrapper { 
+    flex: 1; 
+    overflow-y: auto; 
+    padding: 0 15px 10px 15px; 
+    background: #fff; 
+}
+
+.log-table { 
+    width: 100%; 
+    border-collapse: collapse; 
+    table-layout: fixed; 
+}
+
+.log-table th { 
+    text-align: left; 
+    color: #94a3b8; 
+    font-size: 11px; 
+    padding: 10px 5px; 
+    border-bottom: 2px solid #f1f5f9; 
+    font-weight: 700;
+}
+
+.log-table td { 
+    padding: 8px 5px; 
+    border-bottom: 1px solid #f8fafc; 
+    color: #334155; 
+    font-size: 10.5px; 
+    white-space: nowrap; 
+    overflow: hidden; 
+    text-overflow: ellipsis; 
+    font-family: 'JetBrains Mono', 'Consolas', monospace;
+}
+
+.log-table td:first-child { color: #94a3b8; width: 130px; } 
+
+.card-header {
+    padding: 10px 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    min-height: 45px;
+}
+
+.tabs { display: flex; gap: 12px; white-space: nowrap; }
+.tab { font-size: 12px; font-weight: 700; color: #94a3b8; cursor: pointer; }
+.tab.active { color: #3b82f6; border-bottom: 2px solid #3b82f6; padding-bottom: 2px; }
+
+/* 로봇 제어 버튼 */
+.control-container { padding: 12px; display: flex; flex-direction: column; gap: 8px; flex: 1; justify-content: center; }
+.main-controls { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.ctrl-item {
+    height: 42px; border: 1px solid #f1f5f9; border-radius: 8px; background: #fff;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    cursor: pointer; font-size: 10px; font-weight: 800; box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+}
+.ctrl-item.pause { background: #3b82f6; color: white; grid-column: span 2; border: none; }
+
+/* D-Pad 3x3 정밀 배치 */
+.remote-ui { 
+    flex: 1; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center;
+    padding: 10px;
+}
+
+.d-pad { 
+    display: grid; 
+    grid-template-columns: repeat(3, 42px); 
+    grid-template-rows: repeat(3, 42px);
+    gap: 6px;
+    grid-template-areas: 
+        ".      up      ."
+        "left   center  right"
+        "turnL  down    turnR"; 
+}
+
+.btn-up    { grid-area: up; }
+.btn-left  { grid-area: left; }
+.btn-center { grid-area: center; background-color: #f8fafc; border: none; color: #cbd5e1; border-radius: 8px; display: flex; align-items: center; justify-content: center; cursor: default; }
+.btn-right { grid-area: right; }
+.btn-down  { grid-area: down; }
+.btn-turnL { grid-area: turnL; }
+.btn-turnR { grid-area: turnR; }
+
+.d-btn {
+    width: 42px; height: 42px;
+    border: 1px solid #e2e8f0; border-radius: 8px;
+    background: white; font-weight: bold; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; font-size: 14px;
+    transition: all 0.1s;
+}
+.d-btn:active { background: #f1f5f9; transform: scale(0.95); }
+
+.circle-btn {
+    width: 42px; height: 42px;
+    border: 2px solid #3b82f6; border-radius: 50%;
+    color: #3b82f6; background: white; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; transition: all 0.1s;
+}
+.circle-btn:active { background: #3b82f6; color: white; transform: scale(0.95); }
+
+/* 스위치 */
+.switch { position: relative; display: inline-block; width: 36px; height: 18px; }
+.slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #cbd5e1; transition: .4s; border-radius: 20px; }
+input:checked + .slider { background-color: #3b82f6; }
+.slider:before { position: absolute; content: ""; height: 12px; width: 12px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
+input:checked + .slider:before { transform: translateX(18px); }

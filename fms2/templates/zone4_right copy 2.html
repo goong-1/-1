@@ -1,0 +1,155 @@
+<aside class="right-zone">
+    <!-- 1. 상단 상태 그리드 -->
+    <div class="status-grid">
+        <div class="status-card">
+            <span class="status-label">배터리 잔량</span>
+            <span class="status-value">
+                <span id="bat-val">--</span><span class="status-unit">% ⚡</span>
+            </span>
+        </div>
+        <div class="status-card">
+            <span class="status-label">온라인 상태</span>
+            <!-- id="status-text" 추가하여 동적 변경 가능하게 함 -->
+            <span id="status-text" class="status-value" style="color:#10b981; font-size:13px;">Connected</span>
+        </div>
+        <div class="status-card">
+            <span class="status-label">CPU</span>
+            <span class="status-value">
+                <span id="cpu-val">--</span><span class="status-unit">%</span>
+            </span>
+        </div>
+        <div class="status-card">
+            <span class="status-label">Memory</span>
+            <span class="status-value">
+                <span id="mem-val">--</span><span class="status-unit">%</span>
+            </span>
+        </div>
+    </div>
+
+    <!-- 2. 중앙 차트 섹션 -->
+    <div class="chart-container">
+        <div class="chart-header">
+            <div class="chart-numeric">
+                <span class="num-label" style="color:#94a3b8; font-size:11px;">Temp</span>
+                <span class="num-temp" id="live-temp" style="color:#3b82f6; font-size:22px; font-weight:800;">--°</span>
+                <div style="height:20px;"></div>
+                <span class="num-label" style="color:#94a3b8; font-size:11px;">Speed</span>
+                <span class="num-speed" id="live-speed" style="color:#10b981; font-size:22px; font-weight:800;">--</span>
+            </div>
+            <div class="chart-body" style="flex:1; height:160px; position: relative; overflow: hidden;">
+                <canvas id="telemetryChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div class="camera-container"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        const ctx = document.getElementById('telemetryChart').getContext('2d');
+        
+        const telemetryChart = new Chart(ctx, {
+            data: {
+                labels: Array(15).fill(''),
+                datasets: [
+                    {
+                        type: 'line',
+                        label: 'Temp',
+                        data: Array(15).fill(null),
+                        borderColor: '#3b82f6',
+                        borderWidth: 2,
+                        tension: 0.4,
+                        pointRadius: 0,
+                        yAxisID: 'y-temp'
+                    },
+                    {
+                        type: 'bar',
+                        label: 'Speed',
+                        data: Array(15).fill(null),
+                        backgroundColor: 'rgba(16, 185, 129, 0.3)',
+                        borderColor: '#10b981',
+                        borderWidth: 1,
+                        yAxisID: 'y-speed',
+                        barPercentage: 0.6
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    'y-temp': {
+                        type: 'linear',
+                        position: 'left',
+                        display: true,
+                        suggestedMin: 20, 
+                        suggestedMax: 35,
+                        grid: { display: false },
+                        ticks: { font: { size: 9 } }
+                    },
+                    'y-speed': {
+                        type: 'linear',
+                        position: 'right',
+                        display: true,
+                        suggestedMin: 0,
+                        suggestedMax: 2.0, 
+                        grid: { color: '#f1f5f9' },
+                        ticks: { font: { size: 9 } }
+                    },
+                    x: { display: true, grid: { display: false } }
+                },
+                plugins: { legend: { display: false } },
+                animation: { duration: 400 }
+            }
+        });
+
+        function update() {
+            fetch('/api/telemetry')
+                .then(res => res.json())
+                .then(data => {
+                    const tempEl = document.getElementById('live-temp');
+                    const statusText = document.getElementById('status-text');
+
+                    // [통합] 리셋 감지 로직 (data.temp가 "--"인 경우)
+                    if (data.temp === "--") {
+                        tempEl.innerText = "--°";
+                        document.getElementById('live-speed').innerText = "--";
+                        document.getElementById('bat-val').innerText = "--";
+                        document.getElementById('cpu-val').innerText = "--";
+                        document.getElementById('mem-val').innerText = "--";
+                        
+                        if(statusText) {
+                            statusText.innerText = "Offline";
+                            statusText.style.color = "#ef4444";
+                        }
+                        return; // 여기서 중단하여 차트 업데이트 방지
+                    }
+
+                    // 정상 작동 시 로직
+                    if(statusText) {
+                        statusText.innerText = "Connected";
+                        statusText.style.color = "#10b981";
+                    }
+
+                    tempEl.innerText = typeof data.temp === 'number' ? data.temp.toFixed(1) + '°' : data.temp + '°';
+                    document.getElementById('bat-val').innerText = data.battery;
+                    document.getElementById('cpu-val').innerText = data.cpu;
+                    document.getElementById('mem-val').innerText = data.memory;
+                    
+                    const currentVisualSpeed = (window.robotState && window.robotState.currentSpeed) ? window.robotState.currentSpeed : 0.0;
+                    document.getElementById('live-speed').innerText = currentVisualSpeed.toFixed(2);
+                    
+                    // 차트 업데이트
+                    telemetryChart.data.datasets[0].data.push(data.temp);
+                    telemetryChart.data.datasets[1].data.push(currentVisualSpeed);
+                    telemetryChart.data.datasets[0].data.shift();
+                    telemetryChart.data.datasets[1].data.shift();
+                    telemetryChart.update('none');
+                })
+                .catch(err => console.error("Telemetry fetch error:", err));
+        }        
+
+        setInterval(update, 1500);
+        update();
+    </script>
+</aside>
