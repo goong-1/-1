@@ -1,0 +1,85 @@
+<?xml version="1.0" ?>
+<sdf version="1.8">
+  <world name="tracking_room">
+    <!-- 1. 시뮬레이션 핵심 시스템(플러그인) 설정 -->
+    <plugin filename="gz-sim-physics-system" name="gz::sim::systems::Physics"/> <!-- 물리 엔진 (중력, 충돌 등) -->
+    <plugin filename="gz-sim-scene-broadcaster-system" name="gz::sim::systems::SceneBroadcaster"/> <!-- GUI에 화면 전달 -->
+    <plugin filename="gz-sim-sensors-system" name="gz::sim::systems::Sensors"> <!-- 센서(카메라 등) 렌더링 엔진 설정 -->
+      <render_engine>ogre2</render_engine>
+    </plugin>
+    <plugin filename="gz-sim-user-commands-system" name="gz::sim::systems::UserCommands"/> <!-- 사용자 명령(모델 이동 등) 처리 -->
+
+    <!-- 2. 전역 배경 및 조명 설정 -->
+    <scene>
+      <ambient>0.6 0.6 0.6 1.0</ambient> <!-- 기본 주변광 밝기 -->
+      <background>0.9 0.9 0.9 1.0</background> <!-- 하늘/배경 색상 -->
+      <grid>true</grid> <!-- 바닥 그리드 표시 여부 -->
+    </scene>
+
+    <!-- 태양광 설정 -->
+    <light type="directional" name="sun">
+      <cast_shadows>true</cast_shadows> <!-- 그림자 활성화 -->
+      <pose>0 0 10 0 0 0</pose> <!-- 빛의 위치 -->
+      <diffuse>1.0 1.0 1.0 1</diffuse> <!-- 퍼지는 빛의 색상 (흰색) -->
+      <specular>0.5 0.5 0.5 1</specular> <!-- 반사광 색상 -->
+      <direction>-0.5 0.1 -0.9</direction> <!-- 빛이 내리쬐는 방향 -->
+    </light>
+
+    <!-- 3. 무한 바닥판(Ground Plane) 설정 -->
+    <model name="ground_plane">
+      <static>true</static> <!-- 움직이지 않는 고정 물체 -->
+      <link name="floor_mat">
+        <collision name="collision"> <!-- 충돌 범위 (물체가 빠지지 않게 함) -->
+          <geometry><plane><normal>0 0 1</normal><size>10 10</size></plane></geometry>
+        </collision>
+        <visual name="visual"> <!-- 눈에 보이는 모습 -->
+          <geometry><plane><normal>0 0 1</normal><size>10 10</size></plane></geometry>
+          <material><ambient>0.9 0.9 0.9 1</ambient></material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- 4. 실제 작업 구역(Room) 설정 -->
+    <model name="actual_room">
+      <static>true</static>
+      
+      <!-- 초록색 바닥 매트 (1.77m x 1.11m) -->
+      <link name="floor_mat">
+        <pose>0 0 0.001 0 0 0</pose> <!-- 바닥 겹침 방지를 위해 살짝 띄움 -->
+        <visual name="vis">
+          <geometry><plane><normal>0 0 1</normal><size>1.77 1.11</size></plane></geometry>
+          <material>
+            <ambient>0.6 0.9 0.6 1</ambient> <!-- 연한 초록색 -->
+            <diffuse>0.6 0.9 0.6 1</diffuse>
+          </material>
+        </visual>
+        <collision name="col_floor">
+          <geometry><plane><normal>0 0 1</normal><size>1.77 1.11</size></plane></geometry>
+        </collision>
+      </link>
+
+      <!-- 사방 벽면 설정 (높이 0.3m 초록색 벽) -->
+      
+    </model>
+
+    <!-- 5. 천장 오버헤드 카메라 (Top-View) 설정 -->
+    <model name="ceiling_camera">
+      <static>true</static>
+      <!-- 높이 1.9m에서 바닥을 향하도록(Pitch 1.57rad) 배치 -->
+      <pose>0 0 1.9 0 1.5708 0</pose>
+      <link name="link">
+        <sensor name="camera" type="camera">
+          <camera>
+            <horizontal_fov>1.047</horizontal_fov> <!-- 화각 (약 60도) -->
+            <image><width>640</width><height>480</height></image> <!-- 해상도 -->
+            <clip><near>0.1</near><far>100</far></clip> <!-- 렌더링 거리 범위 -->
+          </camera>
+          <always_on>1</always_on>
+          <update_rate>30</update_rate> <!-- FPS (초당 프레임 수) -->
+          <visualize>true</visualize> <!-- 시뮬레이터 상에서 카메라 시야각 표시 -->
+          <topic>/overhead_camera/image_raw</topic> <!-- ROS 등에서 구독할 토픽명 -->
+        </sensor>
+      </link>
+    </model>
+  </world>
+</sdf>
