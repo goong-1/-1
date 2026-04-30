@@ -1,0 +1,47 @@
+<main class="map-zone" style="background: #0f172a; overflow: hidden; position: relative;">
+
+    <div class="map-overlay-info" style="background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(4px); padding: 12px; border-radius: 8px; min-width: 150px;">
+    <div style="font-size: 14px; font-weight: 800; color: #1e293b; margin-bottom: 8px; border-bottom: 1px solid #e2e8f0; padding-bottom: 4px;">실시간 비전 관제</div>
+    
+    <div style="display: flex; flex-direction: column; gap: 4px;">
+        <div style="font-size: 12px; color: #64748b;">
+            Dist: <span id="ui-dist" style="color: #3b82f6; font-weight: 700;">0.0</span> cm
+        </div>
+        <div style="font-size: 12px; color: #64748b;">
+            Angle: <span id="ui-angle" style="color: #f59e0b; font-weight: 700;">0.0</span> deg
+        </div>
+    </div>
+    </div>
+
+    <div class="video-stream-container" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;">
+        <img src="{{ url_for('video_feed') }}" 
+             alt="Robot Vision Feed"
+             style="width: 100%; height: 100%; object-fit: cover; filter: brightness(1.1) contrast(1.1);">
+    
+        <div class="vision-crosshair" style="position: absolute; width: 100%; height: 100%; pointer-events: none; border: 1px solid rgba(59, 130, 246, 0.2); box-sizing: border-box;">
+            <div style="position: absolute; top: 50%; left: 50%; width: 20px; height: 1px; background: rgba(59, 130, 246, 0.5); transform: translate(-50%, -50%);"></div>
+            <div style="position: absolute; top: 50%; left: 50%; width: 1px; height: 20px; background: rgba(59, 130, 246, 0.5); transform: translate(-50%, -50%);"></div>
+        </div>
+    </div>
+
+    <div class="map-overlay-floors">
+        <button class="floor-btn" onclick="changeMode(this, 'WIDE')">WIDE</button>
+        <button class="floor-btn" onclick="changeMode(this, 'ZOOM')">ZOOM</button>
+        <button class="floor-btn active" onclick="changeMode(this, 'TRACK')">TRACK</button>
+        <button class="floor-btn" onclick="changeMode(this, 'CALIB')">CALIB</button>
+    </div>
+
+    <script>
+        function changeMode(btn, modeName) {
+            document.querySelectorAll('.floor-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            
+            // 타겟 정보 텍스트 변경 (예시)
+            const targetText = document.getElementById('current-target-text');
+            if(modeName === 'TRACK') targetText.innerText = 'ArUco ID 1 (Tracking)';
+            else if(modeName === 'CALIB') targetText.innerText = 'Calibration Mode';
+            
+            console.log("Selected Vision Mode:", modeName);
+        }
+    </script>
+</main>

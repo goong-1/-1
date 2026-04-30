@@ -1,0 +1,67 @@
+/* --- Zone 1: 사이드바 레이아웃 (기존 유지) --- */
+.sidebar-zone { 
+    grid-area: sidebar; 
+    background-color: #1e293b; 
+    display: flex;
+    flex-direction: column;
+    padding: 20px 0;
+    z-index: 10;
+}
+
+.nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 15px 0;
+    cursor: pointer;
+    color: #94a3b8;
+    transition: all 0.2s ease;
+}
+
+.nav-item:hover, .nav-item.active {
+    color: #ffffff;
+    background-color: #334155;
+    border-right: 3px solid #3b82f6;
+}
+
+/* --- Zone 2: 헤더 레이아웃 (블랙 테마 적용) --- */
+.header-zone { 
+    grid-area: header; 
+    background-color: #0f172a !important; /* 짙은 블랙(Slate 950) 계열 */
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 25px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.3); /* 그림자 농도 조절 */
+    border-bottom: 1px solid #334155; /* 사이드바와 연결되는 경계선 */
+}
+
+/* 시스템 제목: 자율주행 로봇 오브젝트 트레킹 Dashboard */
+.system-title { 
+    font-size: 18px;
+    font-weight: 800; 
+    color: #ffffff !important; /* 화이트 텍스트 */
+    letter-spacing: -0.5px; 
+}
+
+/* 헤더 우측 상태 표시바 */
+.header-right { 
+    display: flex; 
+    gap: 20px; 
+    font-size: 13px; 
+    font-weight: 600; 
+    color: #cbd5e1; /* 연한 그레이 */
+}
+
+.status-badge {
+    background: #1e293b; /* 배지 배경도 다크하게 */
+    padding: 4px 12px;
+    border-radius: 6px;
+    border: 1px solid #334155;
+}
+
+/* Online 상태 강조 */
+.text-green {
+    color: #10b981 !important;
+    text-shadow: 0 0 8px rgba(16, 185, 129, 0.4);
+}
