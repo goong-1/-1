@@ -1,0 +1,95 @@
+<footer class="footer-zone">
+    <section class="footer-card log-section">
+        <div class="card-header">
+            <div class="tabs">
+                <span class="tab active">실시간 시스템 로그 </span>
+            </div>
+            <div class="mode-switch-group">
+                <button class="m-btn track" onclick="changeMode('TRACK')">자동 추적</button>
+                <button class="m-btn manual" onclick="changeMode('MANUAL')">수동 제어</button>
+            </div>
+        </div>
+        <div class="log-table-wrapper" id="log-wrapper">
+            <table class="log-table">
+                <thead>
+                    <tr>
+                        <th style="width: 140px;">날짜/시간</th>
+                        <th style="width: 100px;">구분</th>
+                        <th>메시지</th>
+                        <th style="width: 60px;">상태</th>
+                    </tr>
+                </thead>
+                <tbody id="log-tbody">
+                    </tbody>
+            </table>
+        </div>
+    </section>
+
+    <section class="footer-card remote-section">
+        <div class="card-header" style="display: flex; flex-wrap: nowrap; gap: 8px; overflow: visible;">
+            <div style="display: flex; align-items: center; gap: 8px; flex-shrink: 0;">
+                <span class="tab active" style="white-space: nowrap;">Robot 0 제어</span>
+                
+                <div style="display: flex; align-items: center; background: #ffffff; padding: 2px 6px; border-radius: 6px; border: 2px solid #3b82f6; box-shadow: 0 2px 4px rgba(59, 130, 246, 0.1);">
+                    <span style="font-size: 11px; color: #3b82f6; font-weight: 800; margin-right: 4px;">PWM</span>
+                    <input type="number" id="manual-pwm" value="85" min="0" max="100" 
+                        onclick="event.stopPropagation();" 
+                        style="width: 42px; height: 22px; border: none; background: transparent; 
+                                font-size: 14px; font-weight: bold; color: #000; text-align: center; outline: none; cursor: text;">
+                </div>
+            </div>
+
+            <label class="switch" style="margin-left: auto; flex-shrink: 0;">
+                <input type="checkbox" id="remote-toggle" checked>
+                <span class="slider"></span>
+            </label>
+        </div>
+        
+        <div class="remote-ui">
+            <div class="d-pad">
+                <button class="d-btn btn-up">▲</button>
+                <button class="d-btn btn-left">◀</button>
+                <div class="btn-center">●</div>
+                <button class="d-btn btn-right">▶</button>
+                
+                <button class="circle-btn turn-l">⟲</button>
+                <button class="d-btn btn-down">▼</button>
+                <button class="circle-btn turn-r">⟳</button>
+            </div>
+        </div>        
+    </section>
+    
+    
+</footer>
+
+<style>
+    /* 라이트 모드 푸터 레이아웃 */
+    .footer-zone { display: flex; gap: 15px; padding: 15px; background: #f1f5f9; height: 320px; border-top: 1px solid #e2e8f0; }
+    .log-section { flex: 7; }
+    .remote-section { flex: 3; min-width: 320px; }
+
+    .footer-card { background: #ffffff; border-radius: 12px; border: 1px solid #e2e8f0; display: flex; flex-direction: column; overflow: hidden; }
+    .card-header { padding: 10px 15px; background: #f8fafc; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; }
+
+    /* 로그 스타일 */
+    .log-table-wrapper { flex: 1; overflow-y: auto; background: #fff; max-height: 250px; }
+    .log-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+    .log-table td { padding: 6px 10px; border-bottom: 1px dotted #f1f5f9; font-family: 'JetBrains Mono', monospace; }
+    .log-error { color: #ef4444; background: #fef2f2; font-weight: bold; }
+
+    /* D-PAD 디자인 */
+    .remote-ui { flex: 1; display: flex; justify-content: center; align-items: center; }
+    .d-pad { 
+        display: grid; 
+        grid-template-areas: 
+            ". up ." 
+            "left stop right" 
+            "turnL down turnR"; 
+        gap: 10px; 
+    }
+    .d-btn, .circle-btn { width: 55px; height: 55px; border: 1px solid #e2e8f0; border-radius: 10px; background: #f8fafc; font-size: 20px; cursor: pointer; }
+    .btn-up { grid-area: up; } .btn-left { grid-area: left; } .btn-right { grid-area: right; } .btn-down { grid-area: down; }
+    .btn-center { grid-area: stop; width: 55px; height: 55px; display: flex; align-items: center; justify-content: center; font-size: 24px; color: #475569; cursor: pointer; }
+    .circle-btn { border-radius: 50%; background: #f1f5f9; font-size: 18px; }
+    .btn-turnL { grid-area: turnL; } .btn-turnR { grid-area: turnR; }
+</style>

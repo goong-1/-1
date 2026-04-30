@@ -1,0 +1,69 @@
+aruco_tf_node:
+  ros__parameters:
+    camera_index: 0
+    frame_width: 960
+    frame_height: 540
+
+    map_width_m: 1.77
+    map_height_m: 1.11
+
+    # 반드시 네 웹캠 화면 기준 실제 작업영역 네 꼭짓점으로 수정
+    # 순서: left_top, right_top, right_bottom, left_bottom
+    image_corners:
+      left_top: [100, 80]
+      right_top: [860, 80]
+      right_bottom: [860, 460]
+      left_bottom: [100, 460]
+
+    aruco:
+      robot0_left: 10
+      robot0_right: 11
+      robot1_left: 20
+      robot1_right: 21
+
+    frames:
+      map: "map"
+      robot0: "robot0/base_link"
+      robot1: "robot1/base_link"
+
+follow_target_tf_node:
+  ros__parameters:
+    follow_dist: 0.40
+    robot0_frame: "robot0/base_link"
+    target_frame: "follow_target"
+
+follower_controller_node:
+  ros__parameters:
+    robot1_frame: "robot1/base_link"
+    target_frame: "follow_target"
+    map_frame: "map"
+
+    stop_dist: 0.15
+    safety_gap: 0.30
+
+    base_pwm_near: 85
+    base_pwm_mid: 95
+    base_pwm_far: 110
+    max_pwm: 140
+    turn_gain: 2.0
+    min_turn_pwm: 20
+    rear_turn_pwm: 80
+
+robot_driver_node:
+  ros__parameters:
+    host: "0.0.0.0"
+    port: 10000
+
+    # 실제 로봇 MAC 주소에 맞게 수정
+    robot0_mac: "d0:ef:76:47:d3:f4"
+    robot1_mac: "cc:7b:5c:27:d3:c0"
+
+keyboard_node:
+  ros__parameters:
+    robot0_topic: "/robot0/motor_cmd"
+    base_pwm: 85
+
+dashboard_node:
+  ros__parameters:
+    host: "0.0.0.0"
+    port: 5001
