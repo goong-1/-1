@@ -1,0 +1,128 @@
+<aside class="right-zone">
+    <section class="robot-section">
+        <div class="section-header">
+            <span class="robot-badge leader">Robot 0 (Leader)</span>
+            <span id="status-0" class="status-indicator offline">● Offline</span>
+        </div>
+        <div class="data-container">
+            <div class="encoder-box">
+                <span class="label">Encoder (L/R)</span>
+                <div class="values">
+                    <span id="enc-0-l" class="val">L:000</span>
+                    <span id="enc-0-r" class="val">R:000</span>
+                </div>
+            </div>
+            <div class="chart-box">
+                <canvas id="chart-0"></canvas>
+            </div>
+        </div>
+        <div class="calibration-box">
+            <span class="label">Right Wheel Calib</span>
+            <input type="number" id="calib-0" value="1.18" step="0.01" min="0.1" max="10.0">
+        </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <section class="robot-section">
+        <div class="section-header">
+            <span class="robot-badge follower">Robot 1 (Follower)</span>
+            <span id="status-1" class="status-indicator offline">● Offline</span>
+        </div>
+        <div class="data-container">
+            <div class="encoder-box">
+                <span class="label">Encoder (L/R)</span>
+                <div class="values">
+                    <span id="enc-1-l" class="val blue">L:000</span>
+                    <span id="enc-1-r" class="val blue">R:000</span>
+                </div>
+            </div>
+            <div class="chart-box">
+                <canvas id="chart-1"></canvas>
+            </div>
+        </div>
+        <div class="calibration-box">
+            <span class="label">Right Wheel Calib</span>
+            <input type="number" id="calib-1" value="1.05" step="0.01" min="0.1" max="10.0">
+        </div>
+    </section>
+
+    <style>
+        .right-zone { 
+            padding: 15px; 
+            background: #f8fafc; 
+            color: #1e293b; 
+            height: 100%; 
+            font-family: 'Pretendard', sans-serif;
+        }
+        .robot-section { 
+            background: #ffffff; 
+            border: 1px solid #e2e8f0; 
+            border-radius: 12px; 
+            padding: 15px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+        .section-header { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            margin-bottom: 12px; 
+        }
+        .robot-badge { 
+            font-size: 11px; 
+            font-weight: 700; 
+            padding: 4px 8px; 
+            border-radius: 6px; 
+        }
+        .leader { background: #dcfce7; color: #166534; }
+        .follower { background: #dbeafe; color: #1e40af; }
+        .status-indicator { font-size: 11px; font-weight: 600; }
+        .offline { color: #ef4444; }
+        .online { color: #10b981; }
+
+        .data-container { display: flex; gap: 15px; align-items: center; }
+        .encoder-box { min-width: 80px; }
+        .encoder-box .label { font-size: 10px; color: #64748b; display: block; margin-bottom: 5px; }
+        .encoder-box .values { font-family: 'JetBrains Mono', monospace; font-size: 16px; font-weight: 800; line-height: 1.2; }
+        .val { color: #10b981; display: block; }
+        .val.blue { color: #3b82f6; }
+
+        .chart-box { flex: 1; height: 80px; }
+        .divider { height: 15px; }
+
+        /* 보정 박스 스타일 */
+        .calibration-box {
+            margin-top: 12px;
+            padding-top: 10px;
+            border-top: 1px dashed #e2e8f0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .calibration-box .label {
+            font-size: 11px;
+            font-weight: 600;
+            color: #64748b;
+        }
+        .calibration-box input {
+            width: 70px;
+            padding: 3px 6px;
+            border: 1px solid #cbd5e1;
+            border-radius: 4px;
+            font-size: 12px;
+            font-family: 'JetBrains Mono', monospace;
+            text-align: center;
+            background: #f1f5f9;
+        }
+        .calibration-box input:focus {
+            outline: none;
+            border-color: #3b82f6;
+            background: #fff;
+        }
+    </style>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // ... (기타 Chart 생성 및 소켓 로직은 동일하게 유지) ...
+    </script>
+</aside>
