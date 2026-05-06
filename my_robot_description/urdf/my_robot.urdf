@@ -34,7 +34,7 @@
       <geometry><cylinder length="0.02" radius="0.035"/></geometry>
       <surface>
         <friction>
-          <ode><mu>0.5</mu><mu2>0.5</mu2></ode> <!-- 마찰력 설정 (미끄러짐 방지) -->
+          <ode><mu>0.8</mu><mu2>0.8</mu2></ode> <!-- 마찰력 설정 (미끄러짐 방지) -->
         </friction>
       </surface>
     </collision>
@@ -45,7 +45,7 @@
   <joint name="left_wheel_joint" type="continuous"> <!-- 무한 회전 가능 -->
     <parent link="base_link"/>
     <child link="left_wheel"/>
-    <origin xyz="0.05 0.105 -0.01" rpy="-1.5708 0 0"/> <!-- 몸체 기준 왼쪽 배치, 실린더 방향을 위해 90도 회전 -->
+    <origin xyz="0.05 0.092 -0.01" rpy="-1.5708 0 0"/> <!-- 몸체 기준 왼쪽 배치, 실린더 방향을 위해 90도 회전 -->
     <axis xyz="0 0 1"/> <!-- 회전 축 -->
   </joint>
 
@@ -54,7 +54,7 @@
     <visual><geometry><cylinder length="0.02" radius="0.035"/></geometry></visual>
     <collision>
       <geometry><cylinder length="0.02" radius="0.035"/></geometry>
-      <surface><friction><ode><mu>0.5</mu><mu2>0.5</mu2></ode></friction></surface>
+      <surface><friction><ode><mu>0.8</mu><mu2>0.8</mu2></ode></friction></surface>
     </collision>
     <inertial><mass value="0.0825"/><inertia ixx="0.0001" ixy="0" ixz="0" iyy="0.0001" iyz="0" izz="0.0001"/></inertial>
   </link>
@@ -63,7 +63,7 @@
   <joint name="right_wheel_joint" type="continuous">
     <parent link="base_link"/>
     <child link="right_wheel"/>
-    <origin xyz="0.05 -0.105 -0.01" rpy="-1.5708 0 0"/> <!-- 몸체 기준 오른쪽 배치 -->
+    <origin xyz="0.05 -0.092 -0.01" rpy="-1.5708 0 0"/> <!-- 몸체 기준 오른쪽 배치 -->
     <axis xyz="0 0 1"/>
   </joint>
 
@@ -94,7 +94,7 @@
     <plugin filename="gz-sim-diff-drive-system" name="gz::sim::systems::DiffDrive">
       <left_joint>left_wheel_joint</left_joint>
       <right_joint>right_wheel_joint</right_joint>
-      <wheel_separation>0.21</wheel_separation> <!-- 양쪽 바퀴 사이 거리 21cm -->
+      <wheel_separation>0.184</wheel_separation> <!-- 양쪽 바퀴 사이 거리 18.4cm -->
       <wheel_radius>0.035</wheel_radius> <!-- 바퀴 반경 3.5cm -->
       <!--<max_linear_acceleration>0.5</max_linear_acceleration> 가속도 제한--> 
       <!--<max_linear_deceleration>0.5</max_linear_deceleration> 감속도 제한-->
