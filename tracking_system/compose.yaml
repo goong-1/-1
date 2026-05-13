@@ -1,5 +1,8 @@
 services:
   tracking_system:
+    build:
+      context: .
+      dockerfile: Dockerfile
     image: tracking-system:v1
     container_name: tracking_system
     devices:
