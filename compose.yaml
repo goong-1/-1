@@ -1,0 +1,16 @@
+services:
+  tracking_system:
+    image: tracking-system:v1
+    container_name: tracking_system
+    devices:
+      - /dev/video0:/dev/video0
+      - /dev/video1:/dev/video1
+    ports:
+      - "5001:5001"
+      - "10000:10000"
+    environment:
+      - PYTHONUNBUFFERED=1
+    command: >
+      bash -c "source /opt/ros/jazzy/setup.bash &&
+               source /ros_ws/install/setup.bash &&
+               ros2 launch tracking_system tracking_tf_launch.py"
